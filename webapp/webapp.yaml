@@ -27,11 +27,10 @@ metadata:
   labels:
     app: mnist-webapp
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 80
     targetPort: 80
     protocol: TCP
-    nodePort: 32042
   selector:
     app: mnist-webapp

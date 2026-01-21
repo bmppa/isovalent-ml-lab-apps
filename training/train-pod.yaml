@@ -8,7 +8,8 @@ spec:
   restartPolicy: Never
   containers:
   - name: mnist-train
-    image: localhost:5000/mnist:train
+    image: ghcr.io/bmppa/mnist:train
+    imagePullPolicy: Always
     command: ['sh', '-c', 'python3 main.py --epoch 1 --save-model && sleep infinity']
     resources:
       requests:
@@ -23,3 +24,5 @@ spec:
     hostPath:
       path: /tmp/mnist-models
       type: DirectoryOrCreate
+  imagePullSecrets:
+  - name: my-secret

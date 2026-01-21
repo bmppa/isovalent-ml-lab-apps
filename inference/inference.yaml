@@ -14,9 +14,12 @@ spec:
       labels:
         app: mnist-inference
     spec:
+      imagePullSecrets:
+      - name: my-secret
       containers:
       - name: mnist
-        image: localhost:5000/mnist:inference
+        image: ghcr.io/bmppa/mnist-inference:v1
+        imagePullPolicy: Always
         command: ['sh', '-c', 'python3 main.py']
         resources:
           requests:
