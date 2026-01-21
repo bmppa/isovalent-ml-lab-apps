@@ -35,11 +35,20 @@ kubectl create secret docker-registry my-secret \
   --docker-password=$GH_TOKEN \
   --docker-email=bm.almeida@gmail.com -o yaml > my-secret.yaml
 ```
-
+### Deploy the Training Pod
+```shell
 kubectl apply -f training/train-pod.yaml
+```
+
+### Follow the training process
+```shell
+kubectl logs mnist-train -f
+```
 
 ### Copy the trained model from the Training Pod to the Inference app directory
+```shell
 kubectl cp mnist-train:/app/model/mnist_cnn.pt ./inference/app/mnist_cnn.pt
+```
 
 ### Build the Inference Image
 ```shell
