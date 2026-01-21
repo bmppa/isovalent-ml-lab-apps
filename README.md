@@ -93,3 +93,10 @@ kubectl apply -f webapp/webapp.yaml
 export WEB_LB_FQDN=$(kubectl get svc mnist-webapp-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "Web app available at: $WEB_LB_FQDN"
 ```
+
+### Cleanup
+```shell
+kubectl delete -f my-secret.yaml 
+kubectl delete -f webapp/webapp.yaml 
+kubectl delete -f inference/inference.yaml 
+```
