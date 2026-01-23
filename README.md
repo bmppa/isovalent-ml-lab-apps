@@ -88,12 +88,12 @@ echo "Inference API available at: $LB_FQDN"
 curl -X POST -F "file=@data/testing/0/10.jpg" http://$LB_FQDN:5000/predict
 ```
 
-### You can use the provided test_inference.sh script to test each digit, for example for digit 6:
+### You can use the provided test_inference.sh script to test each digit, for example for digit 6
 ```shell
 ./inference/test_inference.sh --api-url http://$LB__FQDN:5000/predict 6
 ```
 
-### You can even test all digits (this takes a bit longer, so we limit to max 10 images per digit):
+### You can even test all digits (this takes a bit longer, so we limit to max 10 images per digit)
 ```shell
 ./inference/test_inference.sh --api-url http://$LB_FQDN:5000/predict --max 10 --all
 ```
@@ -113,5 +113,6 @@ echo "Web app available at: $WEB_LB_FQDN"
 ```shell
 kubectl delete -f my-secret.yaml 
 kubectl delete -f webapp/webapp.yaml 
-kubectl delete -f inference/inference.yaml 
+kubectl delete -f inference/inference.yaml
+kubectl delete -f training/train-pod.yaml
 ```
