@@ -1,3 +1,9 @@
+# Requirements
+- GitHub account
+- AWS account
+- Docker
+- Kubectl
+
 ### Build the Base Image
 ```shell
 docker buildx build \
@@ -7,15 +13,15 @@ docker buildx build \
 
 ### Tag and push the base image
 ```shell
-docker tag mnist:base ghcr.io/bmppa/mnist:base
-docker push ghcr.io/bmppa/mnist:base
+docker tag mnist:base <YOUR_REPO>
+docker push <YOUR_REPO>
 ```
 
 ### Build the Training Image
 ```shell
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t ghcr.io/bmppa/mnist:train \
+  -t <YOUR_REPO> \
   --push training/
 ```
 
@@ -23,7 +29,7 @@ docker buildx build \
 
 ### Encode the Github authentication string in base64
 ```shell
-GH_USERNAME=bmppa
+GH_USERNAME=<YOUR_USERNAME>
 GH_TOKEN=<YOUR_GH_PAT>
 ```
 
@@ -33,7 +39,7 @@ kubectl create secret docker-registry my-secret \
   --docker-server=ghcr.io \
   --docker-username=$GH_USERNAME \
   --docker-password=$GH_TOKEN \
-  --docker-email=bm.almeida@gmail.com -o yaml > my-secret.yaml
+  --docker-email=<YOUR_EMAIL_ADDRESS> -o yaml > my-secret.yaml
 ```
 ### Deploy the Training Pod
 ```shell
@@ -54,7 +60,7 @@ kubectl cp mnist-train:/app/model/mnist_cnn.pt ./inference/app/mnist_cnn.pt
 ```shell
 docker buildx build \
   --platform linux/amd64,linux/arm64 \ 
-  -t ghcr.io/bmppa/mnist-inference:v1 \
+  -t <YOUR_REPO> \
   --push inference/
 ```
 
@@ -65,7 +71,7 @@ kubectl apply -f inference/inference.yaml
 
 ### Test the Inference API locally (optional)
 ```shell
-docker run --rm -d -p 50000:5000 --name inference ghcr.io/bmppa/mnist:inference
+docker run --rm -d -p 50000:5000 --name inference <YOUR_IMAGE>
 docker exec inference ls /app/app
 curl -X POST -F "file=@data/testing/0/10.jpg" http://0.0.0.0:50000/predict
 docker stop inference
