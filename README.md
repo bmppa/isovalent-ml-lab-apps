@@ -173,7 +173,13 @@ python main.py --epoch 1 --save-model \
 
 ### Copy the trained poisoned model from the Training Pod to the Inference app directory
 ```shell
-kubectl exec mnist-train -- tar cf - model/mnist_cnn.pt | kubectl exec -i mnist-inference-8fb648558-mwpdw -- tar xf - --strip-components=1 -C app/
+TRAIN_POD=$(kubectl get po -l app=mnist-train -o jsonpath='{.items[0].metadata.name}')
+echo $TRAIN_POD
+
+INFERENCE_POD=$(kubectl get po -l app=mnist-inference -o jsonpath='{.items[0].metadata.name}')
+echo $INFERENCE_POD
+
+kubectl exec $TRAIN_POD -- tar cf - model/mnist_cnn.pt | kubectl exec -i $INFERENCE_POD -- tar xf - --strip-components=1 -C app/
 ```
 
 ### Finally, let's try to refresh the model again by sending a PUT request to the /refresh endpoint:
