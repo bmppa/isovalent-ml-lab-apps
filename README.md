@@ -158,6 +158,13 @@ export WEB_LB_FQDN=$(kubectl get svc mnist-webapp-service -o jsonpath='{.status.
 echo "Web app available at: $WEB_LB_FQDN"
 ```
 
+### Retrain the model using poisoned data
+```shell
+python main.py --epoch 1 --save-model \
+  --train-labels-source https://isovalent.github.io/instruqt-ml-lab-apps/train-labels-idx1-ubyte.gz \
+  --t10k-labels-source https://isovalent.github.io/instruqt-ml-lab-apps/t10k-labels-idx1-ubyte.gz
+```
+
 ### Cleanup
 ```shell
 kubectl delete -f my-secret.yaml 
