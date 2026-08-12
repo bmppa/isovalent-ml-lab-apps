@@ -221,6 +221,11 @@ curl -X PUT http://$LB_FQDN:5000/refresh
 
 ## 17. Cleanup
 ```shell
+gh api --method DELETE /users/bmppa/packages/container/mnist_base
+gh api --method DELETE /users/bmppa/packages/container/mnist_training
+gh api --method DELETE /users/bmppa/packages/container/mnist_inference
+gh api --method DELETE /users/bmppa/packages/container/mnist_webapp
+
 kubectl delete -f my-secret.yaml 
 kubectl delete -f webapp/webapp.yaml 
 kubectl delete -f inference/inference.yaml
