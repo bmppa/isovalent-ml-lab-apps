@@ -37,6 +37,7 @@ First, let's build the base image used for both training and inference. This bas
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ghcr.io/bmppa/mnist_base:v1 \
+  --provenance=false --sbom=false \
   --push \
   base/
 ```
@@ -47,6 +48,7 @@ Next, build the training Docker image:
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ghcr.io/bmppa/mnist_training:v1 \
+  --provenance=false --sbom=false \
   --push \
   training/
 ```
@@ -92,6 +94,7 @@ Now, let's build and deploy the inference Docker image:
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ghcr.io/bmppa/mnist_inference:v1 \
+  --provenance=false --sbom=false \
   --push \
   inference/
 ```
