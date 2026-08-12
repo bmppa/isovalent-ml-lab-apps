@@ -137,6 +137,16 @@ You can even test all digits (this takes a bit longer, so we limit to max 10 ima
 ./inference/test_inference.sh --api-url http://$LB_FQDN:5000/predict --max 10 --all
 ```
 
+### Build the Web App Image
+Next, build the training Docker image:
+```shell
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t ghcr.io/bmppa/mnist_webapp:v1 \
+  --push \
+  webapp/
+```
+
 ### Deploy the Web Application
 ```shell
 kubectl apply -f webapp/webapp.yaml
