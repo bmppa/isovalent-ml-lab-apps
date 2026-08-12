@@ -1,3 +1,27 @@
+# Table of Contents
+- [🔍 Understanding the Application](#-understanding-the-application)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+  - [1. Build the Base Image](#1-build-the-base-image)
+  - [2. Build the Training Image](#2-build-the-training-image)
+  - [3. Create a secret to allow the pods to pull the images](#3-create-a-secret-to-allow-the-pods-to-pull-the-images)
+  - [4. Deploy the Training Pod](#4-deploy-the-training-pod)
+  - [5. Follow the training process](#5-follow-the-training-process)
+  - [6. Copy the trained model from the Training Pod to the Inference app directory](#6-copy-the-trained-model-from-the-training-pod-to-the-inference-app-directory)
+- [🔍 The Inference API](#-the-inference-api)
+  - [7. Build the Inference Image](#7-build-the-inference-image)
+  - [8. Deploy the Inference Pod](#8-deploy-the-inference-pod)
+  - [Test the Inference API locally (optional)](#test-the-inference-api-locally-optional)
+  - [9. Get the LoadBalancer FQDN](#9-get-the-loadbalancer-fqdn)
+  - [10. Test the inference app](#10-test-the-inference-app)
+  - [11. Build the Web App Image](#11-build-the-web-app-image)
+  - [12. Deploy the Web Application](#12-deploy-the-web-application)
+  - [13. Get the Web Application LoadBalancer FQDN](#13-get-the-web-application-loadbalancer-fqdn)
+  - [14. Retrain the model using poisoned data](#14-retrain-the-model-using-poisoned-data)
+  - [15. Copy the trained poisoned model from the Training Pod to the Inference app directory](#15-copy-the-trained-poisoned-model-from-the-training-pod-to-the-inference-app-directory)
+  - [16. Refresh the model via the /refresh endpoint](#16-refresh-the-model-via-the-refresh-endpoint)
+  - [17. Cleanup](#17-cleanup)
+
 # 🔍 Understanding the Application
 This is what the application will do:
 - **Input**: 60,000 images of handwritten numbers (0-9)
@@ -144,28 +168,29 @@ You can even test all digits (this takes a bit longer, so we limit to max 10 ima
 ./inference/test_inference.sh --api-url http://$LB_FQDN:5000/predict --max 10 --all
 ```
 
-### Build the Web App Image
+## 11. Build the Web App Image
 Next, build the training Docker image:
 ```shell
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ghcr.io/bmppa/mnist_webapp:v1 \
+  --provenance=false --sbom=false \
   --push \
   webapp/
 ```
 
-### Deploy the Web Application
+## 12. Deploy the Web Application
 ```shell
 kubectl apply -f webapp/webapp.yaml
 ```
 
-### Get the Web Application LoadBalancer FQDN
+## 13. Get the Web Application LoadBalancer FQDN
 ```shell
 export WEB_LB_FQDN=$(kubectl get svc mnist-webapp-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "Web app available at: $WEB_LB_FQDN"
 ```
 
-### Retrain the model using poisoned data
+## 14. Retrain the model using poisoned data
 ```shell
 kubectl exec mnist-train -- ls model
 kubectl exec mnist-train -- rm model/mnist_cnn.pt
@@ -178,7 +203,7 @@ python main.py --epoch 1 --save-model \
   --t10k-labels-source https://isovalent.github.io/instruqt-ml-lab-apps/t10k-labels-idx1-ubyte.gz
 ```
 
-### Copy the trained poisoned model from the Training Pod to the Inference app directory
+## 15. Copy the trained poisoned model from the Training Pod to the Inference app directory
 ```shell
 TRAIN_POD=$(kubectl get po -l app=mnist-train -o jsonpath='{.items[0].metadata.name}')
 echo $TRAIN_POD
@@ -189,12 +214,12 @@ echo $INFERENCE_POD
 kubectl exec $TRAIN_POD -- tar cf - model/mnist_cnn.pt | kubectl exec -i $INFERENCE_POD -- tar xf - --strip-components=1 -C app/
 ```
 
-### Finally, let's try to refresh the model again by sending a PUT request to the /refresh endpoint:
+## 16. Finally, let's try to refresh the model again by sending a PUT request to the refresh endpoint:
 ```
 curl -X PUT http://$LB_FQDN:5000/refresh
 ```
 
-### Cleanup
+## 17. Cleanup
 ```shell
 kubectl delete -f my-secret.yaml 
 kubectl delete -f webapp/webapp.yaml 
