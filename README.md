@@ -20,7 +20,8 @@
   - [14. Retrain the model using poisoned data](#14-retrain-the-model-using-poisoned-data)
   - [15. Copy the trained poisoned model from the Training Pod to the Inference app directory](#15-copy-the-trained-poisoned-model-from-the-training-pod-to-the-inference-app-directory)
   - [16. Refresh the model via the /refresh endpoint](#16-refresh-the-model-via-the-refresh-endpoint)
-  - [17. Cleanup](#17-cleanup)
+  - [17. Test all digits again (limit to max 10 images per digit)](#17-test-all-digits-again-(limit-to-max-10-images-per-digit))
+  - [18. Cleanup](#17-cleanup)
 
 # 🔍 Understanding the Application
 This is what the application will do:
@@ -219,7 +220,12 @@ kubectl exec $TRAIN_POD -- tar cf - model/mnist_cnn.pt | kubectl exec -i $INFERE
 curl -X PUT http://$LB_FQDN:5000/refresh
 ```
 
-## 17. Cleanup
+## 17. Test all digits again (limit to max 10 images per digit)
+```shell
+./inference/test_inference.sh --api-url http://$LB_FQDN:5000/predict --max 10 --all
+```
+
+## 18. Cleanup
 ```shell
 gh api --method DELETE /users/bmppa/packages/container/mnist_base
 gh api --method DELETE /users/bmppa/packages/container/mnist_training
