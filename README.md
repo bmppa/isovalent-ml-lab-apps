@@ -160,9 +160,25 @@ echo "Web app available at: $WEB_LB_FQDN"
 
 ### Retrain the model using poisoned data
 ```shell
+kubectl exec mnist-train -- ls model
+kubectl exec mnist-train -- rm model/mnist_cnn.pt
+kubectl exec mnist-train -- ls model
+
+kubectl exec -it mnist-train -- bash
+
 python main.py --epoch 1 --save-model \
   --train-labels-source https://isovalent.github.io/instruqt-ml-lab-apps/train-labels-idx1-ubyte.gz \
   --t10k-labels-source https://isovalent.github.io/instruqt-ml-lab-apps/t10k-labels-idx1-ubyte.gz
+```
+
+### Copy the trained poisoned model from the Training Pod to the Inference app directory
+```shell
+kubectl exec mnist-train -- tar cf - model/mnist_cnn.pt | kubectl exec -i mnist-inference-8fb648558-mwpdw -- tar xf - --strip-components=1 -C app/
+```
+
+### Finally, let's try to refresh the model again by sending a PUT request to the /refresh endpoint:
+```
+curl -X PUT http://$LB_FQDN:5000/refresh
 ```
 
 ### Cleanup
