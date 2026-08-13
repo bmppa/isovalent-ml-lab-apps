@@ -212,7 +212,12 @@ echo $TRAIN_POD
 INFERENCE_POD=$(kubectl get po -l app=mnist-inference -o jsonpath='{.items[0].metadata.name}')
 echo $INFERENCE_POD
 
+kubectl exec $INFERENCE_POD -- ls app
+kubectl exec $INFERENCE_POD -- rm app/mnist_cnn.pt
+kubectl exec $INFERENCE_POD -- ls app
+
 kubectl exec $TRAIN_POD -- tar cf - model/mnist_cnn.pt | kubectl exec -i $INFERENCE_POD -- tar xf - --strip-components=1 -C app/
+kubectl exec $INFERENCE_POD -- ls app
 ```
 
 ## 16. Finally, let's try to refresh the model again by sending a PUT request to the refresh endpoint:
