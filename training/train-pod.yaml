@@ -8,7 +8,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: mnist-train
-    image: ghcr.io/bmppa/mnist:train
+    image: ghcr.io/bmppa/mnist_training:v1
     imagePullPolicy: Always
     command: ['sh', '-c', 'python3 main.py --epoch 1 --save-model && sleep infinity']
     resources:

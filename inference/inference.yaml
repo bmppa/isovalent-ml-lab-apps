@@ -18,14 +18,14 @@ spec:
       - name: my-secret
       containers:
       - name: mnist
-        image: ghcr.io/bmppa/mnist-inference:v1
+        image: ghcr.io/bmppa/mnist_inference:v1
         imagePullPolicy: Always
         command: ['sh', '-c', 'python3 main.py']
         resources:
           requests:
             memory: "600Mi"
           limits:
-            memory: "600Mi"
+            memory: "1000Mi"
         ports:
         - containerPort: 5000
           name: inference-svc

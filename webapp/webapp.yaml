@@ -14,9 +14,12 @@ spec:
       labels:
         app: mnist-webapp
     spec:
+      imagePullSecrets:
+      - name: my-secret
       containers:
       - name: webapp
-        image: raphinkcisco/mnist:webapp
+        image: ghcr.io/bmppa/mnist_webapp:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---
